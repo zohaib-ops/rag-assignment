@@ -1,0 +1,389 @@
+
+  {
+    "query": "What was Amazon's total revenue in 2023?",
+    "answer": "Amazon's total revenue in 2023 was $574.8 billion."
+  },
+  {
+    "query": "What was Amazon's net income in 2023?",
+    "answer": "Amazon's net income in 2023 was $30.4 billion."
+  },
+  {
+    "query": "What was Amazon's operating income in 2023?",
+    "answer": "Amazon reported operating income of $36.9 billion in 2023."
+  },
+  {
+    "query": "What were Amazon's shipping costs in 2023?",
+    "answer": "Amazon's shipping costs in 2023 were $84.3 billion."
+  },
+  {
+    "query": "How much did Amazon spend on fulfillment in 2023?",
+    "answer": "Fulfillment expenses totaled $97.2 billion in 2023."
+  },
+  {
+    "query": "How much did Amazon spend on technology and content in 2023?",
+    "answer": "Technology and content expenses, including R&D, were $85.5 billion in 2023."
+  },
+  {
+    "query": "How much did Amazon spend on marketing in 2023?",
+    "answer": "Marketing expenses were $51.4 billion in 2023."
+  },
+  {
+    "query": "What were Amazon’s general and administrative expenses in 2023?",
+    "answer": "General and administrative expenses were $13.7 billion in 2023."
+  },
+  {
+    "query": "How much did Amazon spend on interest expenses in 2023?",
+    "answer": "Interest expenses were $7.2 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s free cash flow in 2023?",
+    "answer": "Free cash flow improved to $32.7 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s capital expenditure in 2023?",
+    "answer": "Capital expenditures were $58.1 billion in 2023."
+  },
+  {
+    "query": "How much revenue did AWS generate in 2023?",
+    "answer": "AWS generated $90.8 billion in revenue in 2023."
+  },
+  {
+    "query": "What was AWS's operating income in 2023?",
+    "answer": "AWS operating income was $24.6 billion in 2023."
+  },
+  {
+    "query": "What was Amazon's North America segment revenue in 2023?",
+    "answer": "The North America segment generated $352.8 billion in revenue in 2023."
+  },
+  {
+    "query": "What was Amazon's International segment revenue in 2023?",
+    "answer": "The International segment generated $131.2 billion in revenue in 2023."
+  },
+  {
+    "query": "What was the growth rate for Amazon's International segment in 2023?",
+    "answer": "The International segment grew 13% year-over-year in 2023."
+  },
+  {
+    "query": "What revenue did third-party seller services generate in 2023?",
+    "answer": "Third-party seller services revenue was $140.1 billion in 2023."
+  },
+  {
+    "query": "What revenue did Amazon's advertising services generate in 2023?",
+    "answer": "Advertising services revenue reached $46.9 billion in 2023."
+  },
+  {
+    "query": "How much revenue came from subscription services in 2023?",
+    "answer": "Subscription services, including Prime, generated $40.2 billion in 2023."
+  },
+  {
+    "query": "What are Amazon's primary business segments?",
+    "answer": "Amazon reports three primary segments: North America, International, and AWS."
+  },
+  {
+    "query": "What types of services does AWS provide?",
+    "answer": "AWS provides computing, storage, networking, databases, AI/ML, and cloud infrastructure services."
+  },
+  {
+    "query": "How many employees did Amazon have at the end of 2023?",
+    "answer": "Amazon had about 1.54 million employees globally as of December 31, 2023."
+  },
+  {
+    "query": "How much cash and cash equivalents did Amazon report in 2023?",
+    "answer": "Amazon reported $86.8 billion in cash, cash equivalents, and marketable securities at year-end 2023."
+  },
+  {
+    "query": "What was Amazon's total debt in 2023?",
+    "answer": "Total long-term debt stood at $58.3 billion at the end of 2023."
+  },
+  {
+    "query": "What was Amazon’s earnings per share (EPS) in 2023?",
+    "answer": "Amazon reported diluted earnings per share of $2.90 in 2023."
+  },
+  {
+    "query": "What were Amazon’s operating cash flows in 2023?",
+    "answer": "Cash provided by operating activities was $84.9 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s primary use of cash from operations in 2023?",
+    "answer": "The primary use was funding capital expenditures for fulfillment, infrastructure, and AWS data centers."
+  },
+  {
+    "query": "What sustainability initiatives did Amazon highlight in 2023?",
+    "answer": "Amazon advanced renewable energy projects, expanded its electric delivery fleet, and worked toward net-zero carbon goals under the Climate Pledge."
+  },
+  {
+    "query": "Did Amazon repurchase shares in 2023?",
+    "answer": "Amazon did not make significant share repurchases in 2023, focusing instead on reinvestment."
+  },
+  {
+    "query": "What were Amazon’s content expenses in 2023?",
+    "answer": "Video and music content expenses were approximately $16.6 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s physical stores revenue in 2023?",
+    "answer": "Physical stores revenue, including Whole Foods, totaled $19.9 billion in 2023."
+  },
+  {
+    "query": "How did Amazon’s Prime membership perform in 2023?",
+    "answer": "While the exact numbers weren’t disclosed, Amazon reported strong global adoption and engagement of Prime services."
+  },
+  {
+    "query": "What was Amazon’s net sales growth in 2023?",
+    "answer": "Net sales grew 12% year-over-year in 2023."
+  },
+  {
+    "query": "What was Amazon’s effective tax rate in 2023?",
+    "answer": "Amazon reported an effective tax rate of approximately 16% in 2023."
+  },
+  {
+    "query": "What did Amazon highlight about AI in 2023?",
+    "answer": "Amazon emphasized integrating AI across AWS, Alexa, and e-commerce personalization to drive innovation and efficiency."
+  },
+  {
+    "query": "What were Amazon’s costs of sales in 2023?",
+    "answer": "Costs of sales amounted to $339.6 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s international workforce trend in 2023?",
+    "answer": "Amazon noted workforce reductions in some international markets but overall stabilization by year-end."
+  },
+  {
+    "query": "What percentage of Amazon's revenue came from AWS in 2023?",
+    "answer": "AWS contributed about 16% of Amazon's total revenue in 2023."
+  },
+  {
+    "query": "How did Amazon describe its logistics network in 2023?",
+    "answer": "Amazon highlighted improvements in its last-mile delivery and the expansion of its fulfillment centers."
+  },
+  {
+    "query": "What was Amazon’s gross margin in 2023?",
+    "answer": "Amazon’s gross margin improved to 40.9% in 2023."
+  },
+  {
+    "query": "What was Amazon's cost of fulfillment per order trend in 2023?",
+    "answer": "Amazon reported lower per-unit fulfillment costs due to improved efficiencies."
+  },
+  {
+    "query": "How much did Amazon invest in robotics and automation in 2023?",
+    "answer": "Amazon continued investing billions in robotics and warehouse automation to improve efficiency."
+  },
+  {
+    "query": "What was Amazon’s total operating expenses in 2023?",
+    "answer": "Total operating expenses were $537.9 billion in 2023."
+  },
+  {
+    "query": "How did advertising contribute to Amazon's profit in 2023?",
+    "answer": "Advertising remained a high-margin business, significantly contributing to operating income."
+  },
+  {
+    "query": "How did Amazon’s third-party seller business perform in 2023?",
+    "answer": "Third-party services grew strongly, accounting for 60% of units sold."
+  },
+  {
+    "query": "What was Amazon’s capital intensity ratio in 2023?",
+    "answer": "Capital expenditures represented about 10% of revenue in 2023."
+  },
+  {
+    "query": "Did Amazon announce any major acquisitions in 2023?",
+    "answer": "Amazon announced targeted acquisitions in healthcare and AI technology sectors."
+  },
+  {
+    "query": "How many new AWS regions did Amazon launch in 2023?",
+    "answer": "AWS launched multiple new availability zones and regions, expanding global coverage."
+  },
+  {
+    "query": "What role did Alexa play in Amazon’s strategy in 2023?",
+    "answer": "Alexa was positioned as a key AI-driven interface for smart home and retail integration."
+  },
+  {
+    "query": "How did Amazon's stock perform in 2023?",
+    "answer": "Amazon’s stock rebounded strongly in 2023, reflecting improved profitability."
+  },
+  {
+    "query": "What was Amazon’s total assets in 2023?",
+    "answer": "Total assets stood at $527.2 billion at year-end 2023."
+  },
+  {
+    "query": "What was Amazon’s total liabilities in 2023?",
+    "answer": "Total liabilities were $300.2 billion at year-end 2023."
+  },
+  {
+    "query": "What was Amazon’s shareholder equity in 2023?",
+    "answer": "Shareholder equity was $227 billion in 2023."
+  },
+  {
+    "query": "Did Amazon issue new debt in 2023?",
+    "answer": "Yes, Amazon issued new debt to refinance existing obligations and fund investments."
+  },
+  {
+    "query": "What was Amazon’s R&D spending trend in 2023?",
+    "answer": "R&D investments increased, with a focus on AI, AWS, and logistics automation."
+  },
+  {
+    "query": "How much did Amazon invest in renewable energy in 2023?",
+    "answer": "Amazon continued to be the largest corporate buyer of renewable energy, investing billions in new projects."
+  },
+  {
+    "query": "How much inventory did Amazon hold at the end of 2023?",
+    "answer": "Inventories were valued at $36.7 billion at the end of 2023."
+  },
+  {
+    "query": "How much did Amazon generate from ‘Other’ revenue in 2023?",
+    "answer": "Other revenue streams, including co-branded credit cards, totaled $7.1 billion."
+  },
+  {
+    "query": "What was Amazon’s interest income in 2023?",
+    "answer": "Interest income reached $3.8 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s income before income taxes in 2023?",
+    "answer": "Income before income taxes was $36.2 billion in 2023."
+  },
+  {
+    "query": "How did Amazon perform in terms of operating leverage in 2023?",
+    "answer": "Amazon improved operating leverage with higher revenue growth relative to fixed costs."
+  },
+  {
+    "query": "How did Amazon's Prime Video content strategy evolve in 2023?",
+    "answer": "Amazon expanded Prime Video with sports rights, original content, and global reach."
+  },
+  {
+    "query": "What were Amazon's major capital projects in 2023?",
+    "answer": "Key projects included AWS data centers, robotics, fulfillment centers, and renewable energy facilities."
+  },
+  {
+    "query": "How did Amazon describe its competition in 2023?",
+    "answer": "Amazon cited competition from Walmart, Microsoft, Google, and regional e-commerce players."
+  },
+  {
+    "query": "What was Amazon’s international sales share in 2023?",
+    "answer": "International sales accounted for 23% of total net sales in 2023."
+  },
+  {
+    "query": "How did Amazon perform in healthcare initiatives in 2023?",
+    "answer": "Amazon advanced in healthcare with Amazon Clinic and the One Medical acquisition."
+  },
+  {
+    "query": "How did Amazon’s logistics innovations impact costs in 2023?",
+    "answer": "Automation and route optimization helped reduce per-unit logistics costs."
+  },
+  {
+    "query": "What was Amazon’s total gross profit in 2023?",
+    "answer": "Gross profit reached $235.2 billion in 2023."
+  },
+  {
+    "query": "How did AWS contribute to Amazon’s profitability in 2023?",
+    "answer": "AWS provided the largest share of Amazon's operating income despite slower growth."
+  },
+  {
+    "query": "What was Amazon’s effective workforce size after layoffs in 2023?",
+    "answer": "After layoffs, Amazon maintained a workforce of 1.54 million globally."
+  },
+  {
+    "query": "What was Amazon’s average quarterly revenue in 2023?",
+    "answer": "Average quarterly revenue was about $143.7 billion in 2023."
+  },
+  {
+    "query": "How much did Amazon spend on share-based compensation in 2023?",
+    "answer": "Share-based compensation expenses were $20.2 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s annual growth rate in 2023?",
+    "answer": "Annual revenue growth was 12% year-over-year in 2023."
+  },
+  {
+    "query": "What was Amazon’s current ratio at year-end 2023?",
+    "answer": "Amazon reported a current ratio of 1.1 in 2023."
+  },
+  {
+    "query": "How did Amazon’s stock-based compensation affect earnings in 2023?",
+    "answer": "Stock-based compensation reduced reported net income but supported talent retention."
+  },
+  {
+    "query": "What was Amazon’s depreciation and amortization expense in 2023?",
+    "answer": "Depreciation and amortization expenses totaled $47.6 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s total net sales from online stores in 2023?",
+    "answer": "Online store sales were $242.2 billion in 2023."
+  },
+  {
+    "query": "What percentage of Amazon’s revenue came from services in 2023?",
+    "answer": "Services accounted for more than 50% of Amazon’s revenue in 2023."
+  },
+  {
+    "query": "What was Amazon’s most profitable business line in 2023?",
+    "answer": "AWS was the most profitable segment in 2023."
+  },
+  {
+    "query": "How did Amazon’s international profitability compare to North America in 2023?",
+    "answer": "North America was profitable, while International returned to growth but remained lower-margin."
+  },
+  {
+    "query": "What were Amazon’s total expenses in 2023?",
+    "answer": "Total expenses were $538 billion in 2023."
+  },
+  {
+    "query": "What was Amazon’s total comprehensive income in 2023?",
+    "answer": "Comprehensive income, including currency adjustments, was $28.9 billion."
+  },
+  {
+    "query": "How much did Amazon pay in income taxes in 2023?",
+    "answer": "Amazon paid $5.8 billion in income taxes in 2023."
+  },
+  {
+    "query": "What was Amazon’s return on equity (ROE) in 2023?",
+    "answer": "ROE was approximately 13% in 2023."
+  },
+  {
+    "query": "What was Amazon’s return on assets (ROA) in 2023?",
+    "answer": "ROA was about 5.8% in 2023."
+  },
+  {
+    "query": "What was Amazon’s operating margin in 2023?",
+    "answer": "Operating margin was 6.4% in 2023."
+  },
+  {
+    "query": "What was Amazon’s net margin in 2023?",
+    "answer": "Net margin was 5.3% in 2023."
+  },
+  {
+    "query": "How did Amazon describe the economic environment in 2023?",
+    "answer": "Amazon cited macroeconomic uncertainty but resilient consumer demand."
+  },
+  {
+    "query": "How did AWS growth compare to the prior year in 2023?",
+    "answer": "AWS growth slowed to single digits due to cost optimization by customers."
+  },
+  {
+    "query": "What was Amazon’s Q4 2023 revenue?",
+    "answer": "Q4 2023 revenue was $170 billion."
+  },
+  {
+    "query": "What was Amazon’s Q4 2023 net income?",
+    "answer": "Q4 2023 net income was $10.6 billion."
+  },
+  {
+    "query": "What was Amazon’s Q4 2023 operating income?",
+    "answer": "Q4 2023 operating income was $13.2 billion."
+  },
+  {
+    "query": "What was Amazon’s average headcount reduction in 2023?",
+    "answer": "Amazon reduced its workforce by around 27,000 employees in 2023."
+  },
+  {
+    "query": "How did Amazon optimize costs in 2023?",
+    "answer": "Amazon focused on streamlining fulfillment, reducing overhead, and slowing hiring."
+  },
+  {
+    "query": "What were Amazon’s lease obligations in 2023?",
+    "answer": "Operating lease liabilities were $71 billion at year-end 2023."
+  },
+  {
+    "query": "What was Amazon’s inventory turnover ratio in 2023?",
+    "answer": "Amazon’s inventory turnover ratio was 9.1x in 2023."
+  },
+  {
+    "query": "What was Amazon’s accounts receivable at the end of 2023?",
+    "answer": "Accounts receivable were $38.2 billion at year-end
+  }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Assignment</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        .container { max-width: 800px; margin: 0 auto; }
+        input[type="text"] { width: 100%; padding: 10px; font-size: 16px; margin-bottom: 10px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #results-container { margin-top: 20px; }
+        .answer { border: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; }
+        .chunk { border: 1px solid #eee; padding: 10px; margin-bottom: 5px; background-color: #fff; }
+        .highlighted-chunk { background-color: #e0ffe0; border-color: #4CAF50; font-weight: bold; }
+        .score { font-size: 0.8em; color: #888; }
+        h3 { margin-top: 2rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>RAG Assignment: Document Q&A</h1>
+
+    <button id="ingest-btn">1. Ingest Document (Run this first)</button>
+    <p id="ingest-status"></p>
+
+    <hr>
+
+    <h2>2. Ask a Question</h2>
+    <input type="text" id="query-input" placeholder="e.g., What was Amazon's total revenue in 2023?">
+    <button id="submit-btn">Get Answer</button>
+
+    <div id="results-container">
+        <h3>Final Answer</h3>
+        <div id="answer-display" class="answer"></div>
+
+        <h3>Considered Chunks</h3>
+        <div id="chunks-list"></div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('ingest-btn').addEventListener('click', async () => {
+        const statusEl = document.getElementById('ingest-status');
+        statusEl.textContent = 'Ingesting document... this may take a moment.';
+        statusEl.style.color = 'orange';
+
+        try {
+            const response = await fetch('/api/ingest', { method: 'POST' });
+            if (response.ok) {
+                statusEl.textContent = 'Document successfully ingested!';
+                statusEl.style.color = 'green';
+            } else {
+                const errorData = await response.json();
+                statusEl.textContent = `Ingestion failed: ${errorData.message}`;
+                statusEl.style.color = 'red';
+            }
+        } catch (error) {
+            statusEl.textContent = `Network error: ${error.message}`;
+            statusEl.style.color = 'red';
+        }
+    });
+
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+        const query = document.getElementById('query-input').value;
+        if (!query) return;
+
+        const answerDisplay = document.getElementById('answer-display');
+        const chunksList = document.getElementById('chunks-list');
+        answerDisplay.textContent = 'Thinking...';
+        chunksList.innerHTML = '';
+
+        try {
+            const response = await fetch('/api/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                answerDisplay.textContent = data.answer;
+
+                data.chunks.forEach((chunk, index) => {
+                    const chunkDiv = document.createElement('div');
+                    chunkDiv.className = 'chunk';
+                    chunkDiv.innerHTML = `<p>${chunk.text}</p><p class="score">Similarity Score: ${chunk.score.toFixed(4)}</p>`;
+                    
+                    // Highlight the chunks sent to the LLM (top 3 in our case)
+                    if (index < data.highlightedChunks.length) {
+                        chunkDiv.classList.add('highlighted-chunk');
+                    }
+                    chunksList.appendChild(chunkDiv);
+                });
+            } else {
+                const errorData = await response.json();
+                answerDisplay.textContent = `Error: ${errorData.message}`;
+            }
+        } catch (error) {
+            answerDisplay.textContent = `Network error: ${error.message}`;
+        }
+    });
+</script>
+
+</body>
+</html>
