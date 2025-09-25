@@ -89,6 +89,8 @@ The core goal of this system is to ensure that the answers provided are directly
 
 **Flowchart**.
 
+Flowchart.
+
 
           ┌──────────────────────────────┐
           │         Document(s)          │
@@ -135,9 +137,6 @@ User Question                     Question Embedding
               ┌────────────────────┐
               │   Final Answer     │
               └────────────────────┘
-
-
-
 
 **High-Level Code Walkthrough
 **
