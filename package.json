@@ -14,6 +14,7 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "langchain": "^0.3.34",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "testops": "https://static.testops.ai/sdk/nodejs/testops-1.0.0a2.tar.gz"
   }
 }
