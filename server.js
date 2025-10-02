@@ -1,4 +1,7 @@
 // server.js
+// Import OpenTelemetry instrumentation FIRST
+require('./instrument');
+
 // Import necessary libraries
 const express = require('express');
 const { Pool } = require('pg');
@@ -9,8 +12,8 @@ const path = require('path');
 // Use dotenv to load environment variables from the .env file
 require('dotenv').config();
 
-// Import the TestOps SDK
-const { TestOpsClient } = require('testops');
+// Import OpenTelemetry tracer
+const { tracer, opentelemetry } = require('./instrument');
 
 const app = express();
 const port = process.env.PORT || 4444;
@@ -37,11 +40,6 @@ const model = new ChatOpenAI({
     temperature: 0.2,
 });
 
-const testOps = new TestOpsClient({
-  publicKey: process.env.TESTOPS_PUBLIC_KEY,
-  secretKey: process.env.TESTOPS_SECRET_KEY,
-});
-
 /**
  * Utility function to calculate simulated cost based on token usage.
  */
@@ -51,218 +49,239 @@ const calculateCost = (promptTokens, completionTokens, modelName) => {
     return (promptTokens * costPerPromptToken) + (completionTokens * costPerCompletionToken);
 };
 
-// --- Ingestion Endpoint - Modeled after testBasicSpanCreation & testEventTracing ---
+// --- Ingestion Endpoint - Using OpenTelemetry ---
 app.post('/api/ingest', async (req, res) => {
-  let trace = null;
-  
-  try {
-    trace = testOps.trace({
-      name: 'data_pipeline_ingestion_zohaib', // Unique identifier for filtering
-      metadata: {
-        test_type: 'data_pipeline_ingestion',
-        otel_integration: true,
-        telemetry_source: 'rag-application',
-        otel_attributes: {
-          'service.name': 'rag-backend',
-          'service.version': '1.0.0',
-          'deployment.environment': 'development',
-          'telemetry.sdk.language': 'javascript',
-          'telemetry.sdk.name': 'testops',
-        },
-      },
-      tags: ['rag_zohaib', 'data_pipeline', 'ingestion'],
-    });
+  const span = tracer.startSpan('data_pipeline_ingestion_zohaib', {
+    attributes: {
+      'service.name': 'rag-backend',
+      'service.version': '1.0.0',
+      'deployment.environment': 'development',
+      'telemetry.sdk.language': 'javascript',
+      'operation.type': 'data_pipeline_ingestion',
+      'telemetry.source': 'rag-application'
+    }
+  });
 
+  try {
     const documentPath = path.join(__dirname, 'Amazon-com-I-Report.txt');
     const documentText = fs.readFileSync(documentPath, 'utf-8');
 
-    if (trace) {
-      const chunkingSpan = trace.span({
-        name: 'chunking_document',
-        input: { file_path: documentPath },
-        metadata: { operation: 'chunking' },
-      });
-      const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 1000,
-        chunkOverlap: 200,
-      });
-      const chunks = await splitter.splitText(documentText);
-      chunkingSpan.end({ output: { chunks_count: chunks.length } });
+    // Document chunking span
+    const chunkingSpan = tracer.startSpan('chunking_document', {
+      parent: span,
+      attributes: {
+        'operation': 'chunking',
+        'file.path': documentPath
+      }
+    });
 
-      trace.event({
-        name: 'document_split_checkpoint',
-        metadata: { 
-          event_type: 'checkpoint', 
-          message: `Document split into ${chunks.length} chunks.`
-        },
-      });
-
-      const embeddingSpan = trace.span({
-        name: 'generating_embeddings',
-        input: { model_name: embeddings.modelName },
-        metadata: { operation: 'embedding' },
-      });
-      const allEmbeddings = await embeddings.embedDocuments(chunks);
-      embeddingSpan.end({ output: { embeddings_count: allEmbeddings.length } });
-
-      
-      const values = allEmbeddings.map((embedding, index) => {
-        const escapedContent = chunks[index].replace(/'/g, "''");
-        return `('${escapedContent}', '${JSON.stringify(embedding)}'::vector)`;
-      });
-      await pool.query('DELETE FROM chunks;');
-      const insertQuery = `INSERT INTO chunks (content, embedding) VALUES ${values.join(',')};`;
-      await pool.query(insertQuery);
-      const dbSpan = trace.span({
-        name: 'database_insert',
-        input: { query: insertQuery},
-        metadata: { operation: 'database', db_table: 'chunks' },
-      });
-      dbSpan.end({ output: { inserted_rows: allEmbeddings.length } });
-      
-      // REMOVED: trace.end({ status: 'success' }); -> Rely on flushAsync() to finalize
-    }
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+    });
+    const chunks = await splitter.splitText(documentText);
     
-    await testOps.flushAsync(); // Implicitly closes and sends the trace
+    chunkingSpan.setAttributes({
+      'chunks.count': chunks.length
+    });
+    chunkingSpan.end();
+
+    // Add event for checkpoint
+    span.addEvent('document_split_checkpoint', {
+      'event.type': 'checkpoint',
+      'message': `Document split into ${chunks.length} chunks.`
+    });
+
+    // Embedding generation span
+    const embeddingSpan = tracer.startSpan('generating_embeddings', {
+      parent: span,
+      attributes: {
+        'operation': 'embedding',
+        'model.name': embeddings.modelName
+      }
+    });
+
+    const allEmbeddings = await embeddings.embedDocuments(chunks);
     
+    embeddingSpan.setAttributes({
+      'embeddings.count': allEmbeddings.length
+    });
+    embeddingSpan.end();
+
+    // Database insertion
+    const dbSpan = tracer.startSpan('database_insert', {
+      parent: span,
+      attributes: {
+        'operation': 'database',
+        'db.table': 'chunks'
+      }
+    });
+
+    const values = allEmbeddings.map((embedding, index) => {
+      const escapedContent = chunks[index].replace(/'/g, "''");
+      return `('${escapedContent}', '${JSON.stringify(embedding)}'::vector)`;
+    });
+    await pool.query('DELETE FROM chunks;');
+    const insertQuery = `INSERT INTO chunks (content, embedding) VALUES ${values.join(',')};`;
+    await pool.query(insertQuery);
+    
+    dbSpan.setAttributes({
+      'db.rows.inserted': allEmbeddings.length
+    });
+    dbSpan.end();
+
+    span.setStatus({ code: opentelemetry.SpanStatusCode.OK });
     res.status(200).send({ message: 'Document ingested successfully.' });
     
   } catch (error) {
     console.error('Ingestion error:', error);
     
-    if (trace) {
-      // Still log the error event to the trace before flushing
-      trace.event({
-          name: 'ingestion_error_event',
-          metadata: { error_type: 'IngestionError', message: error.message },
-      });
-      // REMOVED: trace.end({ status: 'failure' });
-    }
-
-    await testOps.flushAsync(); // Implicitly closes and sends the trace
+    span.addEvent('ingestion_error_event', {
+      'error.type': 'IngestionError',
+      'error.message': error.message
+    });
+    span.setStatus({ 
+      code: opentelemetry.SpanStatusCode.ERROR, 
+      message: error.message 
+    });
 
     res.status(500).send({ message: 'Ingestion failed.', error: error.message });
   } finally {
-    await testOps.shutdownAsync();
+    span.end();
   }
 });
 
-// --- RAG Query Endpoint - Modeled after testGenerationTracing, testTraceHierarchy, testOTelScoring ---
+// --- RAG Query Endpoint - Using OpenTelemetry ---
 app.post('/api/query', async (req, res) => {
   const { query } = req.body;
   if (!query) {
     return res.status(400).send({ message: 'Query is required.' });
   }
 
-  let trace = null;
   let retrievedChunks = [];
   let topChunks = [];
   let finalAnswer = 'Failed to generate answer.';
 
+  const span = tracer.startSpan('rag_query_workflow_zohaib', {
+    attributes: {
+      'service.name': 'rag-backend',
+      'service.version': '1.0.0',
+      'deployment.environment': 'development',
+      'telemetry.sdk.language': 'javascript',
+      'operation.type': 'rag_query_workflow',
+      'telemetry.source': 'rag-application',
+      'user.query': query
+    }
+  });
+
   try {
-    trace = testOps.trace({
-      name: 'rag_query_workflow_zohaib',
-      input: { user_query: query },
-      metadata: {
-        test_type: 'rag_query_workflow',
-        otel_integration: true,
-        telemetry_source: 'rag-application',
-        otel_attributes: {
-          'service.name': 'rag-backend',
-          'service.version': '1.0.0',
-          'deployment.environment': 'development',
-          'telemetry.sdk.language': 'javascript',
-          'telemetry.sdk.name': 'testops',
-        },
-      },
-      tags: ['rag_zohaib', 'query_zohaib', 'llm'],
+    // Query embedding span
+    const queryEmbeddingSpan = tracer.startSpan('embedding_user_query', {
+      parent: span,
+      attributes: {
+        'operation': 'embedding'
+      }
+    });
+    const queryEmbedding = await embeddings.embedQuery(query);
+    queryEmbeddingSpan.setAttributes({
+      'query.embedding.length': queryEmbedding.length
+    });
+    queryEmbeddingSpan.end();
+
+    // Retrieval process span
+    const retrievalSpan = tracer.startSpan('retrieval_process', {
+      parent: span,
+      attributes: {
+        'operation': 'retrieval',
+        'initial.query': query
+      }
     });
 
-    if (trace) {
-      const queryEmbeddingSpan = trace.span({
-        name: 'embedding_user_query',
-        metadata: { operation: 'embedding' },
-      });
-      const queryEmbedding = await embeddings.embedQuery(query);
-      queryEmbeddingSpan.end({ output: { query_embedding_length: queryEmbedding.length } });
+    // Database search span
+    const dbSearchSpan = tracer.startSpan('database_search', {
+      parent: retrievalSpan,
+      attributes: {
+        'db.table': 'chunks',
+        'span.level': 'child'
+      }
+    });
+    
+    const { rows } = await pool.query(
+      `SELECT content, 1 - (embedding <=> $1::vector) as similarity_score
+      FROM chunks
+      ORDER BY embedding <=> $1::vector
+      LIMIT 5`,
+      [JSON.stringify(queryEmbedding)]
+    );
+    
+    dbSearchSpan.setAttributes({
+      'retrieved.chunks.count': rows.length
+    });
+    dbSearchSpan.end();
 
-      const retrievalSpan = trace.span({
-        name: 'retrieval_process',
-        input: { initial_query: query },
-        metadata: { operation: 'retrieval' },
-      });
-      
-      const dbSearchSpan = retrievalSpan.span({
-          name: 'database_search',
-          metadata: { db_table: 'chunks', span_level: 'child' },
-      });
-      const { rows } = await pool.query(
-        `SELECT content, 1 - (embedding <=> $1::vector) as similarity_score
-        FROM chunks
-        ORDER BY embedding <=> $1::vector
-        LIMIT 5`,
-        [JSON.stringify(queryEmbedding)]
-      );
-      dbSearchSpan.end({ output: { retrieved_chunks_count: rows.length } });
+    // Re-ranking span
+    const rerankingSpan = tracer.startSpan('re-ranking_chunks', {
+      parent: retrievalSpan,
+      attributes: {
+        'operation': 're_ranking',
+        'span.level': 'child',
+        'initial.candidates': rows.length
+      }
+    });
+    
+    retrievedChunks = rows.map(row => ({
+      text: row.content,
+      score: row.similarity_score,
+    }));
+    topChunks = retrievedChunks.slice(0, 3);
+    
+    rerankingSpan.setAttributes({
+      'final.chunks.selected': topChunks.length
+    });
+    rerankingSpan.end();
+    retrievalSpan.end();
 
-      const rerankingSpan = retrievalSpan.span({
-        name: 're-ranking_chunks',
-        input: { initial_candidates: rows.length },
-        metadata: { operation: 're_ranking', span_level: 'child' },
-      });
-      retrievedChunks = rows.map(row => ({
-        text: row.content,
-        score: row.similarity_score,
-      }));
-      topChunks = retrievedChunks.slice(0, 3);
-      rerankingSpan.end({ output: { final_chunks_selected: topChunks.length } });
-
-      retrievalSpan.end();
-      
-      const context = topChunks.map(chunk => chunk.text).join('\n\n---\n\n');
-      const prompt = `You are a helpful assistant. Use the following pieces of context to answer the question.
+    // LLM Generation span
+    const context = topChunks.map(chunk => chunk.text).join('\n\n---\n\n');
+    const prompt = `You are a helpful assistant. Use the following pieces of context to answer the question.
 If you don't know the answer, just say that you don't know. Do not make up an answer.
 ----------------
 Context:\n${context}\n----------------\nQuestion: ${query}\n`;
 
-      const llmGeneration = trace.generation({
-        name: 'llm_generation_gpt4o',
-        model: model.modelName,
-        input: { prompt, user_query: query },
-        metadata: {
-          operation: 'llm_call',
-          model_provider: 'openai',
-          temperature: model.temperature,
-        },
-      });
-      const llmResponse = await model.invoke(prompt);
-      
-      const promptTokens = 50 + topChunks.reduce((sum, chunk) => sum + chunk.text.length / 4, 0);
-      const completionTokens = llmResponse.content.length / 4;
-      const cost = calculateCost(promptTokens, completionTokens, model.modelName);
-      finalAnswer = llmResponse.content.trim();
+    const llmSpan = tracer.startSpan('llm_generation_gpt4o', {
+      parent: span,
+      attributes: {
+        'operation': 'llm_call',
+        'model.provider': 'openai',
+        'model.name': model.modelName,
+        'model.temperature': model.temperature,
+        'llm.request.type': 'generation'
+      }
+    });
 
-      llmGeneration.end({ 
-        output: { response: finalAnswer },
-        metadata: {
-          'ai.usage.prompt_tokens': promptTokens,
-          'ai.usage.completion_tokens': completionTokens,
-          'cost_estimate': cost,
-        },
-      });
-      
-      testOps.score({
-          traceId: trace.id,
-          observationId: llmGeneration.id,
-          name: 'answer_quality_score',
-          value: 1.0, 
-          comment: 'Answer is grounded in the retrieved context.',
-      });
-
-      // REMOVED: trace.end({ status: 'success' }); -> Rely on flushAsync() to finalize
-    }
+    const llmResponse = await model.invoke(prompt);
     
-    await testOps.flushAsync();
+    const promptTokens = 50 + topChunks.reduce((sum, chunk) => sum + chunk.text.length / 4, 0);
+    const completionTokens = llmResponse.content.length / 4;
+    const cost = calculateCost(promptTokens, completionTokens, model.modelName);
+    finalAnswer = llmResponse.content.trim();
+
+    llmSpan.setAttributes({
+      'ai.usage.prompt_tokens': promptTokens,
+      'ai.usage.completion_tokens': completionTokens,
+      'cost.estimate': cost,
+      'llm.response.length': finalAnswer.length
+    });
+    llmSpan.end();
+
+    // Add quality score as an event
+    span.addEvent('answer_quality_score', {
+      'score.name': 'answer_quality_score',
+      'score.value': 1.0,
+      'score.comment': 'Answer is grounded in the retrieved context.'
+    });
+
+    span.setStatus({ code: opentelemetry.SpanStatusCode.OK });
     
     res.status(200).send({
       answer: finalAnswer,
@@ -273,15 +292,14 @@ Context:\n${context}\n----------------\nQuestion: ${query}\n`;
   } catch (error) {
     console.error('RAG query error:', error);
     
-    if (trace) {
-      trace.event({
-          name: 'query_error_event',
-          metadata: { error_type: 'QueryError', message: error.message },
-      });
-      // REMOVED: trace.end({ status: 'failure' });
-    }
-
-    await testOps.flushAsync();
+    span.addEvent('query_error_event', {
+      'error.type': 'QueryError',
+      'error.message': error.message
+    });
+    span.setStatus({ 
+      code: opentelemetry.SpanStatusCode.ERROR, 
+      message: error.message 
+    });
     
     res.status(500).send({ 
         message: 'Failed to process query.', 
@@ -289,7 +307,7 @@ Context:\n${context}\n----------------\nQuestion: ${query}\n`;
         answer: finalAnswer,
     });
   } finally {
-    await testOps.shutdownAsync();
+    span.end();
   }
 });
 
