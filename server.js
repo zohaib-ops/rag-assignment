@@ -8,10 +8,8 @@ const { Pool } = require('pg');
 const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
 const fs = require('fs');
 const path = require('path');
-// Use dotenv to load environment variables from the .env file
-require('dotenv').config();
 
-// Import OpenTelemetry tracer
+// Import OpenTelemetry tracer (dotenv is loaded in instrument.js)
 const { tracer, opentelemetry } = require('./instrument');
 
 // Import AI Provider Factory
