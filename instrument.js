@@ -8,7 +8,6 @@ const opentelemetry = require('@opentelemetry/api');
 // Traceloop AI instrumentation packages
 const { AnthropicInstrumentation } = require('@traceloop/instrumentation-anthropic');
 const { OpenAIInstrumentation } = require('@traceloop/instrumentation-openai');
-const { VertexAIInstrumentation } = require('@traceloop/instrumentation-vertexai');
 
 // Configure OTLP HTTP exporter
 const buildHeaders = () => {
@@ -35,7 +34,6 @@ const sdk = new NodeSDK({
   instrumentations: [
     new AnthropicInstrumentation(),
     new OpenAIInstrumentation(),
-    new VertexAIInstrumentation(),
   ],
 });
 
