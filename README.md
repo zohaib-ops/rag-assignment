@@ -51,8 +51,30 @@ A Retrieval-Augmented Generation (RAG) application built with Express.js, LangCh
    # Edit .env with your configuration
    ```
 
-4. **Required Environment Variables:**
+4. **Configure AI Provider**: The application supports multiple AI providers with automatic model selection:
+
+   **For Anthropic (Claude) - Recommended:**
    ```env
+   AI_PROVIDER=anthropic
+   ANTHROPIC_API_KEY=your_anthropic_api_key_here
+   OPENAI_API_KEY=your_openai_api_key_here  # Required for embeddings
+   ```
+
+   **For OpenAI (GPT):**
+   ```env
+   AI_PROVIDER=openai
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+5. **Complete Environment Variables:**
+   ```env
+   # AI Provider Selection ('openai' or 'anthropic')
+   AI_PROVIDER=anthropic
+
+   # API Keys
+   OPENAI_API_KEY=your_openai_api_key
+   ANTHROPIC_API_KEY=your_anthropic_api_key  # Only if using Anthropic
+
    # Database Configuration
    PG_HOST=localhost
    PG_USER=your_username
@@ -60,14 +82,20 @@ A Retrieval-Augmented Generation (RAG) application built with Express.js, LangCh
    PG_DATABASE=your_database
    PG_PORT=5432
 
-   # OpenAI Configuration
-   OPENAI_API_KEY=your_openai_api_key
-
    # TestOps Configuration (Optional)
    TESTOPS_PUBLIC_KEY=your_testops_public_key
    TESTOPS_SECRET_KEY=your_testops_secret_key
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:3000/api/public/otel/v1/traces
    ```
+
+### 🤖 Supported AI Providers
+
+| Provider | Chat Model | Embedding Model | Features |
+|----------|------------|-----------------|----------|
+| **Anthropic** | Claude 3.5 Sonnet | OpenAI ada-002 | Latest Claude model with superior reasoning |
+| **OpenAI** | GPT-4 | text-embedding-ada-002 | Proven GPT-4 performance |
+
+> **Note**: All providers currently use OpenAI's `text-embedding-ada-002` for document embeddings due to its proven performance in RAG applications. This requires an OpenAI API key even when using Anthropic for chat completion.
 
 ## 🛠️ Usage
 

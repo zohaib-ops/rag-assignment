@@ -1,5 +1,4 @@
 const { NodeSDK } = require('@opentelemetry/sdk-node');
-const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
 const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
 const { registerInstrumentations } = require('@opentelemetry/instrumentation');
 const opentelemetry = require('@opentelemetry/api');
@@ -23,24 +22,7 @@ const otlpExporter = new OTLPTraceExporter({
 const sdk = new NodeSDK({
   traceExporter: otlpExporter,
   instrumentations: [
-    // getNodeAutoInstrumentations({
-    //   '@opentelemetry/instrumentation-dns': {
-    //     enabled: false,
-    //   },
-    //   '@opentelemetry/instrumentation-fs': {
-    //     enabled: false,
-    //   },
-    // }),
-    new AnthropicInstrumentation(),
-    new OpenAIInstrumentation(),
-    new VertexAIInstrumentation(),
-  ],
-});
-
-// Register additional AI SDK instrumentations
-registerInstrumentations({
-  instrumentations: [
-    new AnthropicInstrumentation(),
+    // new AnthropicInstrumentation(),
     new OpenAIInstrumentation(),
     new VertexAIInstrumentation(),
   ],

@@ -5,7 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-10-02
+## [Unreleased]
+
+### Added
+- **🚀 Generic AI Provider Architecture**: Multi-provider support with automatic model selection
+- **🤖 Anthropic Claude Integration**: Added support for Claude 3.5 Sonnet alongside existing OpenAI support
+- **⚙️ Environment-Based Provider Switching**: Runtime provider selection via `AI_PROVIDER` environment variable
+- **💰 Provider-Specific Cost Calculation**: Accurate pricing models for OpenAI and Anthropic providers
+- **📊 Enhanced Tracing**: Provider-aware OpenTelemetry spans with model and pricing information
+- **🔧 Configuration Templates**: Added `.env.example` for streamlined setup
+
+### Changed
+- **🔄 Refactored Model Initialization**: Replaced hardcoded OpenAI models with generic factory pattern
+- **📈 Improved Observability**: Added provider information to OpenTelemetry spans
+- **🏗️ Architecture Enhancement**: Centralized provider management with validation
+
+### Technical Implementation
+- **AIProviderFactory Class**: Centralized provider management with configuration validation
+- **Generic Model Interfaces**: Standardized chat and embedding model creation across providers
+- **Provider-Aware Tracing**: Enhanced OpenTelemetry spans with provider and model metadata
+
+### Dependencies
+- **Added**: @anthropic-ai/sdk: ^0.32.1 (Claude 3.5 Sonnet support)
+
+## [1.0.0] - 2025-01-02
 
 ### Added
 - **OpenTelemetry Integration**: Complete observability stack with comprehensive tracing

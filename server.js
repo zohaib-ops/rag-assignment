@@ -1,11 +1,10 @@
 // server.js
-// Import OpenTelemetry instrumentation FIRST
+// // Import OpenTelemetry instrumentation FIRST
 require('./instrument');
 
 // Import necessary libraries
 const express = require('express');
 const { Pool } = require('pg');
-const { OpenAIEmbeddings, ChatOpenAI } = require('@langchain/openai');
 const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
 const fs = require('fs');
 const path = require('path');
@@ -14,6 +13,9 @@ require('dotenv').config();
 
 // Import OpenTelemetry tracer
 const { tracer, opentelemetry } = require('./instrument');
+
+// Import AI Provider Factory
+const { AIProviderFactory } = require('./config/aiProviders');
 
 const app = express();
 const port = process.env.PORT || 4444;
@@ -29,25 +31,29 @@ const pool = new Pool({
   port: process.env.PG_PORT,
 });
 
-const embeddings = new OpenAIEmbeddings({
-    apiKey: process.env.OPENAI_API_KEY,
-    modelName: "text-embedding-ada-002",
-});
+// Configuration: Choose your AI provider here
+const AI_PROVIDER = process.env.AI_PROVIDER || 'anthropic'; // 'openai' or 'anthropic'
 
-const model = new ChatOpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    modelName: "gpt-4o",
-    temperature: 0.2,
-});
+// Check if provider is configured
+if (!AIProviderFactory.isProviderConfigured(AI_PROVIDER)) {
+  console.error(`❌ Provider '${AI_PROVIDER}' is not properly configured. Check your environment variables.`);
+  if (AI_PROVIDER === 'anthropic') {
+    console.error('Required: ANTHROPIC_API_KEY and OPENAI_API_KEY (for embeddings)');
+  } else if (AI_PROVIDER === 'openai') {
+    console.error('Required: OPENAI_API_KEY');
+  }
+  process.exit(1);
+}
 
-/**
- * Utility function to calculate simulated cost based on token usage.
- */
-const calculateCost = (promptTokens, completionTokens, modelName) => {
-    const costPerPromptToken = 0.000005; 
-    const costPerCompletionToken = 0.000015;
-    return (promptTokens * costPerPromptToken) + (completionTokens * costPerCompletionToken);
-};
+// Initialize AI models using the factory
+const embeddings = AIProviderFactory.createEmbeddingModel(AI_PROVIDER);
+const model = AIProviderFactory.createChatModel(AI_PROVIDER);
+const providerInfo = AIProviderFactory.getProviderInfo(AI_PROVIDER);
+
+console.log(`🤖 Using AI Provider: ${providerInfo.name}`);
+console.log(`💬 Chat Model: ${providerInfo.chatModel}`);
+console.log(`🔍 Embedding Model: ${providerInfo.embeddingModel}`);
+
 
 // --- Ingestion Endpoint - Using OpenTelemetry ---
 app.post('/api/ingest', async (req, res) => {
@@ -97,7 +103,8 @@ app.post('/api/ingest', async (req, res) => {
       parent: span,
       attributes: {
         'operation': 'embedding',
-        'model.name': embeddings.modelName
+        'model.name': providerInfo.embeddingModel,
+        'model.provider': providerInfo.name
       }
     });
 
@@ -247,32 +254,28 @@ app.post('/api/query', async (req, res) => {
 If you don't know the answer, just say that you don't know. Do not make up an answer.
 ----------------
 Context:\n${context}\n----------------\nQuestion: ${query}\n`;
-
-    const llmSpan = tracer.startSpan('llm_generation_gpt4o', {
-      parent: span,
-      attributes: {
-        'operation': 'llm_call',
-        'model.provider': 'openai',
-        'model.name': model.modelName,
-        'model.temperature': model.temperature,
-        'llm.request.type': 'generation'
-      }
-    });
+// Manual LLM Tracing - Optional
+    // const llmSpan = tracer.startSpan('llm_generation', {
+    //   parent: span,
+    //   attributes: {
+    //     'operation': 'llm_call',
+    //     'model.provider': providerInfo.name,
+    //     'model.name': providerInfo.chatModel,
+    //     'model.temperature': 0.2,
+    //     'llm.request.type': 'generation'
+    //   }
+    // });
 
     const llmResponse = await model.invoke(prompt);
     
-    const promptTokens = 50 + topChunks.reduce((sum, chunk) => sum + chunk.text.length / 4, 0);
-    const completionTokens = llmResponse.content.length / 4;
-    const cost = calculateCost(promptTokens, completionTokens, model.modelName);
     finalAnswer = llmResponse.content.trim();
 
-    llmSpan.setAttributes({
-      'ai.usage.prompt_tokens': promptTokens,
-      'ai.usage.completion_tokens': completionTokens,
-      'cost.estimate': cost,
-      'llm.response.length': finalAnswer.length
-    });
-    llmSpan.end();
+    // llmSpan.setAttributes({
+    //   'ai.usage.prompt_tokens': promptTokens,
+    //   'ai.usage.completion_tokens': completionTokens,
+    //   'llm.response.length': finalAnswer.length
+    // });
+    // llmSpan.end();
 
     // Add quality score as an event
     span.addEvent('answer_quality_score', {
