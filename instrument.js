@@ -13,6 +13,17 @@ const { OpenAIInstrumentation } = require('@traceloop/instrumentation-openai');
 const buildHeaders = () => {
   const headers = {};
   
+  // Function to generate the Base64-encoded string
+function generateBase64Headers(publicKey, secretKey) {
+  // Combine the keys with a colon separator
+  const combinedString = `${publicKey}:${secretKey}`;
+  // Create a buffer from the combined string, specifying UTF-8 encoding
+  const buffer = Buffer.from(combinedString, 'utf-8');
+  // Convert the buffer to a Base64 string
+  return buffer.toString('base64');
+}
+process.env.OTEL_EXPORTER_OTLP_HEADERS = generateBase64Headers(process.env.TESTOPS_PUBLIC_KEY, process.env.TESTOPS_SECRET_KEY);
+
   // Use OTEL_EXPORTER_OTLP_HEADERS if available
   if (process.env.OTEL_EXPORTER_OTLP_HEADERS) {
     headers['Authorization'] = `Basic ${process.env.OTEL_EXPORTER_OTLP_HEADERS}`;
